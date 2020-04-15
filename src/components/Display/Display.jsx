@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons/faAngleLeft";
 import { faAngleRight } from "@fortawesome/free-solid-svg-icons/faAngleRight";
 
-const Display = ({ result, history }) => {
+const Display = ({ top, bottom }) => {
   return (
     <div id="display" className="c-display">
       <button
@@ -15,7 +15,7 @@ const Display = ({ result, history }) => {
         <FontAwesomeIcon icon={faAngleLeft} />
       </button>
       <div className="c-display__top">
-        <span className="c-display__top-txt">{history}</span>
+        <span className="c-display__top-txt">{top}</span>
       </div>
       <button
         type="button"
@@ -30,7 +30,7 @@ const Display = ({ result, history }) => {
         <FontAwesomeIcon icon={faAngleLeft} />
       </button>
       <div className="c-display__bottom">
-        <span className="c-display__bottom-txt">{result}</span>
+        <span className="c-display__bottom-txt">{bottom}</span>
       </div>
       <button
         type="button"
@@ -43,8 +43,8 @@ const Display = ({ result, history }) => {
 };
 
 Display.propTypes = {
-  result: PropTypes.string.isRequired,
-  history: PropTypes.string.isRequired,
+  top: PropTypes.string.isRequired,
+  bottom: PropTypes.string.isRequired,
 };
 
 export default Display;

@@ -16,12 +16,13 @@ const containerClasses = {
   "0": "c-operations__cmd isZero",
 };
 
-const Command = ({ command }) => {
+const Command = ({ command, handleCommand }) => {
   return (
     <div className={containerClasses[command.text] || containerClasses.default}>
       <button
         id={command.id}
         type="button"
+        onClick={() => handleCommand(command)}
         className={buttonClasses[command.type]}
       >
         {command.text}
@@ -36,6 +37,7 @@ Command.propTypes = {
     text: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
   }).isRequired,
+  handleCommand: PropTypes.func.isRequired,
 };
 
 export default Command;
