@@ -4,12 +4,20 @@ import "./App.scss";
 
 import commands from "../../data/commands";
 import { isOnlyZero, hasNoDecimals } from "../../utils";
+
+import Notification from "../Notification/Notification";
 import Display from "../Display/Display";
 import Command from "../Command/Command";
 
 const App = () => {
   const [currentVal, setCurrentVal] = useState("0");
   const [memory, setMemory] = useState("");
+
+  const [notification] = useState({
+    message: null,
+    type: null,
+    timeout: 3000,
+  });
 
   const handleDecimal = useCallback(
     ({ text }) => {
@@ -85,6 +93,8 @@ const App = () => {
           ))}
         </div>
       </div>
+
+      <Notification notification={notification} />
     </div>
   );
 };

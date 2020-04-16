@@ -16,6 +16,8 @@
   --btn-scroller-hover-text-color: hsla(60, 67%, 85%, 90%);
   --btn-scroller-hover-bg-color: hsla(214, 11%, 21%, 50%);
   --calculator-w: 280px;
+  --alert-error-bg-color: hsla(0, 100%, 50%, 75%);
+  --alert-info-bg-color: hsla(197, 71%, 50%, 75%);
   --calculator-display-h: 110px;
   --calculator-display-bg-color: var(--primary-color);
   --display-top-font-size: 1.2rem;
@@ -103,6 +105,24 @@ body {
   border: 1px solid var(--accent-color-1);
   border-radius: 3px;
   margin-top: 1rem;
+}
+
+.c-alert {
+  width: var(--calculator-w);
+  background: var(--primary-color);
+  color: var(--light-text-color);
+  text-align: center;
+  padding: 0.3rem 0.75rem;
+  margin: 0.5rem;
+  font-weight: 700;
+}
+
+.c-alert.c-alert--error {
+  background: var(--alert-error-bg-color);
+}
+
+.c-alert.c-alert--info {
+  background: var(--alert-info-bg-color);
 }
 
 .c-display,
@@ -260,6 +280,10 @@ body {
 
   .c-calculator {
     margin-top: 0.5rem;
+    margin-left: 2rem;
+  }
+
+  .c-alert {
     margin-left: 2rem;
   }
 }
