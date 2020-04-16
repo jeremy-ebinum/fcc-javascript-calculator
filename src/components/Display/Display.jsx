@@ -1,41 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useLayoutEffect } from "react";
+
 import PropTypes from "prop-types";
 
-import TopLeftScroller from "./TopLeftScroller";
-import TopRightScroller from "./TopRightScroller";
-import BottomLeftScroller from "./BottomLeftScroller";
-import BottomRightScroller from "./BottomRightScroller";
+import { jsClasses, getTopOverflow, getBottomOverflow } from "./diplayUtils";
 
-const jsClasses = {
-  top: "js-displayTop",
-  topTxt: "js-displayTopTxt",
-  bottom: "js-displayBottom",
-  bottomTxt: "js-displayBottomTxt",
-};
-
-const checkOverflow = (displayElem, txtElem, tolerance) => {
-  if (!displayElem || !txtElem) return false;
-  return (txtElem.offsetWidth / displayElem.offsetWidth) * 100 >= tolerance;
-};
-
-const getTopOverflow = (tolerance = 95) => {
-  const displayElem = document.querySelector(`.${jsClasses.top}`);
-  const txtElem = document.querySelector(`.${jsClasses.topTxt}`);
-
-  return checkOverflow(displayElem, txtElem, tolerance);
-};
-
-const getBottomOverflow = (tolerance = 95) => {
-  const displayElem = document.querySelector(`.${jsClasses.bottom}`);
-  const txtElem = document.querySelector(`.${jsClasses.bottomTxt}`);
-
-  return checkOverflow(displayElem, txtElem, tolerance);
-};
+import TopLeftScroller from "./DisplayTopLeftScroller";
+import TopRightScroller from "./DisplayTopRightScroller";
+import BottomLeftScroller from "./DisplayBottomLeftScroller";
+import BottomRightScroller from "./DisplayBottomRightScroller";
 
 const Display = ({ top, bottom }) => {
   const [hasTopOverflow, setHasTopOverflow] = useState(false);
   const [hasBottomOverflow, setHasBottomOverflow] = useState(false);
+  const [topTxtRightPos, setTopTxtRightPos] = useState(0);
+  const [bottomTxtRightPos, setBottomTxtRightPos] = useState(0);
 
   useLayoutEffect(() => {
     setHasTopOverflow(getTopOverflow());
@@ -44,18 +23,32 @@ const Display = ({ top, bottom }) => {
 
   return (
     <div id="display" className="c-display">
-      <TopLeftScroller show={hasTopOverflow} />
+      <TopLeftScroller show={hasTopOverflow} dispatch={setTopTxtRightPos} />
       <div className={`c-display__top ${jsClasses.top}`}>
-        <div className={`c-display__top-txt ${jsClasses.topTxt}`}>{top}</div>
+        <div
+          style={{ right: topTxtRightPos }}
+          className={`c-display__top-txt ${jsClasses.topTxt}`}
+        >
+          {top}
+        </div>
       </div>
-      <TopRightScroller show={hasTopOverflow} />
-      <BottomLeftScroller show={hasBottomOverflow} />
+      <TopRightScroller show={hasTopOverflow} dispatch={setTopTxtRightPos} />
+      <BottomLeftScroller
+        show={hasBottomOverflow}
+        dispatch={setBottomTxtRightPos}
+      />
       <div className={`c-display__bottom ${jsClasses.bottom}`}>
-        <div className={`c-display__bottom-txt ${jsClasses.bottomTxt}`}>
+        <div
+          style={{ right: bottomTxtRightPos }}
+          className={`c-display__bottom-txt ${jsClasses.bottomTxt}`}
+        >
           {bottom}
         </div>
       </div>
-      <BottomRightScroller show={hasBottomOverflow} />
+      <BottomRightScroller
+        show={hasBottomOverflow}
+        dispatch={setBottomTxtRightPos}
+      />
     </div>
   );
 };
