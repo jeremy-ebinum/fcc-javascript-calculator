@@ -48,26 +48,26 @@ const App = () => {
   }, []);
 
   const handleOperands = useCallback(
-    (text) => {
+    (value) => {
       setCalcState((prev) => ({ ...prev, hasJustEvaluated: false }));
 
       if (hasJustEvaluated) {
         setCalcState((prev) => ({
           ...prev,
-          currentVal: text,
-          memory: !isZero(text) ? text : "",
+          currentVal: value,
+          memory: !isZero(value) ? value : "",
         }));
       } else {
         const determineMemory = () => {
-          if (isZero(currentVal) && isZero(text)) {
-            return memory === "" ? text : memory;
+          if (isZero(currentVal) && isZero(value)) {
+            return memory === "" ? value : memory;
           }
 
           if (isZero(memory) || isOpertorWithZero(memory)) {
-            return replaceLastCharWith(memory, text);
+            return replaceLastCharWith(memory, value);
           }
 
-          return memory + text;
+          return memory + value;
         };
 
         const determineCurrentVal = () => {
@@ -76,10 +76,10 @@ const App = () => {
             isOperator(currentVal) ||
             isOpertorWithZero(currentVal)
           ) {
-            return replaceLastCharWith(currentVal, text);
+            return replaceLastCharWith(currentVal, value);
           }
 
-          return currentVal + text;
+          return currentVal + value;
         };
 
         setCalcState((prev) => ({
@@ -119,30 +119,30 @@ const App = () => {
   }, [currentVal, memory, hasJustEvaluated]);
 
   const handleOperators = useCallback(
-    (text) => {
+    (value) => {
       setCalcState((prev) => ({
         ...prev,
-        currentVal: text,
+        currentVal: value,
         hasJustEvaluated: false,
       }));
 
       if (hasJustEvaluated) {
-        setCalcState((prev) => ({ ...prev, memory: prevVal + text }));
+        setCalcState((prev) => ({ ...prev, memory: prevVal + value }));
       } else if (!endsWithOperator(memory)) {
         setCalcState((prev) => ({
           ...prev,
           prevVal: memory,
-          memory: memory + text,
+          memory: memory + value,
         }));
       } else if (!endsWithOtherOperatorAndMinus(memory)) {
         setCalcState((prev) => ({
           ...prev,
-          memory: isMinus(text) ? memory + text : prevVal + text,
+          memory: isMinus(value) ? memory + value : prevVal + value,
         }));
-      } else if (text !== "-") {
+      } else if (value !== "-") {
         setCalcState((prev) => ({
           ...prev,
-          memory: prevVal + text,
+          memory: prevVal + value,
         }));
       }
     },
@@ -190,10 +190,10 @@ const App = () => {
   }, [memory, clear]);
 
   const handleCommands = useCallback(
-    ({ type, text }) => {
-      if (type === "operand") return handleOperands(text);
+    ({ type, value }) => {
+      if (type === "operand") return handleOperands(value);
       if (type === "decimal") return handleDecimal();
-      if (type === "operator") return handleOperators(text);
+      if (type === "operator") return handleOperators(value);
       if (type === "equals") return evaluate();
 
       return clear();

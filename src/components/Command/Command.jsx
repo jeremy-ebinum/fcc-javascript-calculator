@@ -2,11 +2,10 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const buttonClasses = {
-  operand: "c-btn",
   operator: "c-btn c-btn--alt",
   clear: "c-btn c-btn--alt",
-  decimal: "c-btn c-btn--alt",
   equals: "c-btn c-btn--alt",
+  default: "c-btn",
 };
 
 const containerClasses = {
@@ -18,14 +17,16 @@ const containerClasses = {
 
 const Command = ({ command, handleCommand }) => {
   return (
-    <div className={containerClasses[command.text] || containerClasses.default}>
+    <div
+      className={containerClasses[command.value] || containerClasses.default}
+    >
       <button
         id={command.id}
         type="button"
         onClick={() => handleCommand(command)}
-        className={buttonClasses[command.type]}
+        className={buttonClasses[command.type] || buttonClasses.default}
       >
-        {command.text}
+        {command.value}
       </button>
     </div>
   );
@@ -34,7 +35,7 @@ const Command = ({ command, handleCommand }) => {
 Command.propTypes = {
   command: PropTypes.shape({
     id: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired,
+    value: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
   }).isRequired,
   handleCommand: PropTypes.func.isRequired,
