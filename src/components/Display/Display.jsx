@@ -22,7 +22,7 @@ const Display = ({ top, bottom }) => {
   });
 
   return (
-    <div id="display" className="c-display">
+    <div className="c-display">
       <TopLeftScroller show={hasTopOverflow} dispatch={setTopTxtRightPos} />
       <div className={`c-display__top ${jsClasses.top}`}>
         <div
@@ -39,6 +39,7 @@ const Display = ({ top, bottom }) => {
       />
       <div className={`c-display__bottom ${jsClasses.bottom}`}>
         <div
+          id="display"
           style={{ right: bottomTxtRightPos }}
           className={`c-display__bottom-txt ${jsClasses.bottomTxt}`}
         >

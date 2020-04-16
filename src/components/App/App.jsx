@@ -1,81 +1,204 @@
 import React, { useState, useCallback } from "react";
+import safeEval from "safe-eval";
 
 import "./App.scss";
 
 import commands from "../../data/commands";
-import { isOnlyZero, hasNoDecimals } from "../../utils";
+import {
+  hasNoDecimals,
+  isZero,
+  isOperator,
+  isOpertorWithZero,
+  isMinus,
+  endsWithOperator,
+  endsWithOtherOperatorAndMinus,
+  replaceLastCharWith,
+  getEndingNumber,
+  isDivideByZero,
+} from "../../utils";
 
 import Notification from "../Notification/Notification";
 import Display from "../Display/Display";
 import Command from "../Command/Command";
 
+const ZERO = "0";
+const DECIMAL = ".";
+
+const initialCalcState = {
+  currentVal: ZERO,
+  prevVal: ZERO,
+  memory: "",
+  hasJustEvaluated: false,
+};
+
+const initialNotificationState = {
+  message: null,
+  type: null,
+  timeout: 3000,
+};
+
 const App = () => {
-  const [currentVal, setCurrentVal] = useState("0");
-  const [memory, setMemory] = useState("");
+  const [calcState, setCalcState] = useState(initialCalcState);
+  const [notification, setNotification] = useState(initialNotificationState);
 
-  const [notification] = useState({
-    message: null,
-    type: null,
-    timeout: 3000,
-  });
+  const { currentVal, prevVal, memory, hasJustEvaluated } = calcState;
 
-  const handleDecimal = useCallback(
-    ({ text }) => {
-      if (isOnlyZero(currentVal)) setCurrentVal((prev) => prev + text);
-      if (!isOnlyZero(currentVal) && hasNoDecimals(currentVal)) {
-        setCurrentVal((prev) => prev + text);
-      }
-    },
-    [currentVal]
-  );
+  const clear = useCallback(() => {
+    setCalcState(initialCalcState);
+  }, []);
 
   const handleOperands = useCallback(
-    ({ text }) => {
-      if (isOnlyZero(currentVal)) {
-        setCurrentVal(text);
+    (text) => {
+      setCalcState((prev) => ({ ...prev, hasJustEvaluated: false }));
+
+      if (hasJustEvaluated) {
+        setCalcState((prev) => ({
+          ...prev,
+          currentVal: text,
+          memory: !isZero(text) ? text : "",
+        }));
       } else {
-        setCurrentVal((prev) => prev + text);
+        const determineMemory = () => {
+          if (isZero(currentVal) && isZero(text)) {
+            return memory === "" ? text : memory;
+          }
+
+          if (isZero(memory) || isOpertorWithZero(memory)) {
+            return replaceLastCharWith(memory, text);
+          }
+
+          return memory + text;
+        };
+
+        const determineCurrentVal = () => {
+          if (
+            isZero(currentVal) ||
+            isOperator(currentVal) ||
+            isOpertorWithZero(currentVal)
+          ) {
+            return replaceLastCharWith(currentVal, text);
+          }
+
+          return currentVal + text;
+        };
+
+        setCalcState((prev) => ({
+          ...prev,
+          currentVal: determineCurrentVal(),
+          memory: determineMemory(),
+        }));
       }
     },
-    [currentVal]
+    [currentVal, memory, hasJustEvaluated]
   );
 
-  const handleOperators = useCallback(({ text }) => {
-    console.log(text);
-  }, []);
+  const handleDecimal = useCallback(() => {
+    if (hasJustEvaluated) {
+      setCalcState((prev) => ({
+        ...prev,
+        currentVal: ZERO + DECIMAL,
+        memory: ZERO + DECIMAL,
+        hasJustEvaluated: false,
+      }));
+    } else if (hasNoDecimals(currentVal)) {
+      setCalcState((prev) => ({ ...prev, hasJustEvaluated: false }));
+      if (endsWithOperator(memory) || (isZero(currentVal) && memory === "")) {
+        setCalcState((prev) => ({
+          ...prev,
+          currentVal: ZERO + DECIMAL,
+          memory: memory + ZERO + DECIMAL,
+        }));
+      } else {
+        setCalcState((prev) => ({
+          ...prev,
+          currentVal: getEndingNumber(memory) + DECIMAL,
+          memory: memory + DECIMAL,
+        }));
+      }
+    }
+  }, [currentVal, memory, hasJustEvaluated]);
 
-  const handleEquals = useCallback(({ text }) => {
-    console.log(text);
-  }, []);
+  const handleOperators = useCallback(
+    (text) => {
+      setCalcState((prev) => ({
+        ...prev,
+        currentVal: text,
+        hasJustEvaluated: false,
+      }));
 
-  const handleClear = useCallback(() => {
-    setCurrentVal("0");
-    setMemory("");
-  }, []);
-
-  const handleCommands = useCallback(
-    (command) => {
-      switch (command.type) {
-        case "operand":
-          handleOperands(command);
-          break;
-        case "decimal":
-          handleDecimal(command);
-          break;
-        case "operator":
-          handleOperators(command);
-          break;
-        case "equals":
-          handleEquals(command);
-          break;
-        case "clear":
-          handleClear(command);
-          break;
-        default:
-          break;
+      if (hasJustEvaluated) {
+        setCalcState((prev) => ({ ...prev, memory: prevVal + text }));
+      } else if (!endsWithOperator(memory)) {
+        setCalcState((prev) => ({
+          ...prev,
+          prevVal: memory,
+          memory: memory + text,
+        }));
+      } else if (!endsWithOtherOperatorAndMinus(memory)) {
+        setCalcState((prev) => ({
+          ...prev,
+          memory: isMinus(text) ? memory + text : prevVal + text,
+        }));
+      } else if (text !== "-") {
+        setCalcState((prev) => ({
+          ...prev,
+          memory: prevVal + text,
+        }));
       }
     },
-    [handleClear, handleDecimal, handleEquals, handleOperands, handleOperators]
+    [prevVal, memory, hasJustEvaluated]
+  );
+
+  const evaluate = useCallback(() => {
+    let formula = memory;
+    let result;
+
+    while (endsWithOperator(formula)) {
+      formula = replaceLastCharWith(formula, "");
+    }
+
+    formula = formula.replace(/x/g, "*");
+
+    if (isDivideByZero(formula)) {
+      setNotification((prev) => ({
+        ...prev,
+        message: "Cannot divide by zero",
+        type: "error",
+      }));
+
+      clear();
+    } else {
+      try {
+        result = Math.round(10000 * safeEval(formula)) / 10000;
+      } catch (e) {
+        setNotification((prev) => ({
+          ...prev,
+          message: "Unsafe operation",
+          type: "error",
+        }));
+        clear();
+      }
+
+      setCalcState((prev) => ({
+        ...prev,
+        currentVal: result.toString(),
+        memory: `${memory.replace(/\*/g, "x")}=${result}`,
+        prevVal: result,
+        hasJustEvaluated: true,
+      }));
+    }
+  }, [memory, clear]);
+
+  const handleCommands = useCallback(
+    ({ type, text }) => {
+      if (type === "operand") return handleOperands(text);
+      if (type === "decimal") return handleDecimal();
+      if (type === "operator") return handleOperators(text);
+      if (type === "equals") return evaluate();
+
+      return clear();
+    },
+    [handleOperands, handleDecimal, handleOperators, evaluate, clear]
   );
 
   return (
@@ -84,10 +207,10 @@ const App = () => {
         <Display top={memory} bottom={currentVal} />
 
         <div className="c-operations">
-          {commands.map((cmd) => (
+          {commands.map((command) => (
             <Command
-              key={cmd.id}
-              command={cmd}
+              key={command.id}
+              command={command}
               handleCommand={handleCommands}
             />
           ))}

@@ -48,7 +48,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "regenerator-runtime": "^0.13.5",
-    "remove-files-webpack-plugin": "^1.4.0"
+    "remove-files-webpack-plugin": "^1.4.0",
+    "safe-eval": "^0.4.1"
   },
   "browserslist": {
     "production": [
