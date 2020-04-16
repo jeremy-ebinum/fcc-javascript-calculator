@@ -33,15 +33,14 @@ export const getBottomTxtProps = () => {
   const displayCoords = displayElem.getBoundingClientRect();
   const txtCoords = txtElem.getBoundingClientRect();
 
-  const { fontSize, letterSpacing } = window.getComputedStyle(txtElem);
-  const scrollAmount = parseInt(fontSize, 10) + parseInt(letterSpacing, 10);
+  const { fontSize } = window.getComputedStyle(txtElem);
 
   return {
     top: txtCoords.top - displayCoords.top,
     right: txtCoords.right - displayCoords.right,
     bottom: txtCoords.bottom - displayCoords.bottom,
     left: txtCoords.left - displayCoords.left,
-    scrollAmount,
+    scrollAmount: parseInt(fontSize, 10),
   };
 };
 
@@ -54,14 +53,13 @@ export const getTopTxtProps = () => {
   const displayCoords = displayElem.getBoundingClientRect();
   const txtCoords = txtElem.getBoundingClientRect();
 
-  const { fontSize, letterSpacing } = window.getComputedStyle(txtElem);
-  const scrollAmount = parseInt(fontSize, 10) + parseInt(letterSpacing, 10);
+  const { fontSize } = window.getComputedStyle(txtElem);
 
   return {
     top: txtCoords.top - displayCoords.top,
     right: txtCoords.right - displayCoords.right,
     bottom: txtCoords.bottom - displayCoords.bottom,
     left: txtCoords.left - displayCoords.left,
-    scrollAmount,
+    scrollAmount: parseInt(fontSize, 10),
   };
 };

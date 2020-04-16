@@ -1,38 +1,35 @@
 @import "../../styles/partials/variables";
 
+/* SASS VARIABLES
+*******************************************************************************/
+$body-bg-color: hsl(0, 0%, 10%);
+$info-color: hsla(197, 71%, 50%, 75%);
+$secondary-color: hsl(195, 20%, 13%);
+$danger-color: hsla(0, 100%, 50%, 75%);
+$warning-color: hsl(60, 67%, 40%);
+$light-color: hsl(60, 67%, 95%);
+$dark-color: hsl(194, 100%, 3%);
+$accent-color-1: hsl(214, 11%, 31%);
+$accent-color-2: hsl(215, 34%, 55%);
+
 /* CSS VARIABLES
 *******************************************************************************/
 :root {
-  --body-bg-color: hsl(0, 0%, 10%);
-  --primary-color: hsl(194, 100%, 3%);
-  --secondary-color: hsl(195, 20%, 13%);
-  --accent-color-1: hsl(214, 11%, 31%);
-  --accent-color-2: hsl(215, 34%, 55%);
-  --light-text-color: hsl(60, 67%, 95%);
-  --dark-text-color: hsl(194, 100%, 3%);
-  --history-text-color: hsl(60, 67%, 40%);
-  --btn-scroller-bg-color: hsla(194, 100%, 3%, 75%);
-  --btn-scroller-text-color: hsla(60, 67%, 85%, 50%);
-  --btn-scroller-hover-text-color: hsla(60, 67%, 85%, 90%);
-  --btn-scroller-hover-bg-color: hsla(214, 11%, 21%, 50%);
   --calculator-w: 280px;
-  --alert-error-bg-color: hsla(0, 100%, 50%, 75%);
-  --alert-info-bg-color: hsla(197, 71%, 50%, 75%);
   --calculator-display-h: 110px;
-  --calculator-display-bg-color: var(--primary-color);
-  --display-top-font-size: 1.2rem;
-  --display-bottom-font-size: 1.6rem;
+  --display-top-font-size: 1rem;
+  --display-bottom-font-size: 1.5rem;
   --calculator-cmd-h: 3rem;
   --calculator-cmd-font-size: 1.2rem;
   --btn-small-w: 25px;
-  --btn-small-h: 35px;
+  --btn-small-h: 30px;
 }
 
 /* GENERAL STYLES
 *******************************************************************************/
 body {
-  background-color: var(--body-bg-color);
-  color: var(--light-text-color);
+  background-color: $body-bg-color;
+  color: $light-color;
 }
 
 /* UTILITIES
@@ -43,7 +40,7 @@ body {
 
 /* COMPONENTS
 *******************************************************************************/
-.o-container {
+.o-wrapper {
   min-height: 100vh;
   width: 100%;
   display: flex;
@@ -55,6 +52,7 @@ body {
 .c-btn {
   font-family: $font-family-base;
   display: flex;
+  appearance: none;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -64,26 +62,24 @@ body {
   height: 100%;
   margin: 0;
   text-decoration: none;
-  background: var(--primary-color);
-  color: var(--light-text-color);
   font-size: inherit;
   font-weight: 700;
+  background: $dark-color;
+  color: $light-color;
   cursor: pointer;
-  transition: background-color 400ms ease, color 200ms ease, transform 0.3s ease;
-  -webkit-appearance: none;
-  -moz-appearance: none;
+  transition: all 200ms ease;
 
   &:hover {
-    background: var(--accent-color-1);
+    background: $accent-color-1;
   }
 }
 
 .c-btn.c-btn--alt {
-  background: var(--secondary-color);
+  background: $secondary-color;
 
   &:hover {
-    background: var(--accent-color-2);
-    color: var(--dark-text-color);
+    background: $accent-color-2;
+    color: $dark-color;
   }
 }
 
@@ -91,26 +87,26 @@ body {
   width: var(--btn-small-w);
   height: var(--btn-small-h);
   border-radius: 25%;
-  color: var(--btn-scroller-text-color);
-  background: var(--btn-scroller-bg-color);
+  background: $dark-color;
+  color: lighten($color: $accent-color-1, $amount: 15);
 
   &:hover {
-    background: var(--btn-scroller-hover-bg-color);
-    color: var(--btn-scroller-hover-text-color);
+    background: rgba($color: $accent-color-1, $alpha: 50);
+    color: $light-color;
   }
 }
 
 .c-calculator {
   width: var(--calculator-w);
-  border: 1px solid var(--accent-color-1);
+  border: 1px solid $accent-color-1;
   border-radius: 3px;
   margin-top: 1rem;
 }
 
 .c-alert {
   width: var(--calculator-w);
-  background: var(--primary-color);
-  color: var(--light-text-color);
+  background: $dark-color;
+  color: $light-color;
   text-align: center;
   padding: 0.3rem 0.75rem;
   margin: 0.5rem;
@@ -118,11 +114,11 @@ body {
 }
 
 .c-alert.c-alert--error {
-  background: var(--alert-error-bg-color);
+  background: $danger-color;
 }
 
 .c-alert.c-alert--info {
-  background: var(--alert-info-bg-color);
+  background: $info-color;
 }
 
 .c-display,
@@ -140,7 +136,7 @@ body {
   grid-gap: 0 5px;
   padding: 1rem 0.5rem;
   height: var(--calculator-display-h);
-  background-color: var(--calculator-display-bg-color);
+  background-color: $dark-color;
 }
 
 .c-display__top,
@@ -168,9 +164,8 @@ body {
   bottom: 10%;
   font-weight: 400;
   font-size: var(--display-top-font-size);
-  letter-spacing: 1px;
   vertical-align: baseline;
-  color: var(--history-text-color);
+  color: $warning-color;
 }
 
 .c-display__bottom {
@@ -182,8 +177,7 @@ body {
   margin-top: 0.5rem;
   font-weight: 700;
   font-size: var(--display-bottom-font-size);
-  color: var(--light-text-color);
-  letter-spacing: 2px;
+  color: $light-color;
 }
 
 .c-display__top-scroller-left,
@@ -212,7 +206,7 @@ body {
 .c-operations {
   display: grid;
   gap: 2px;
-  background-color: var(--accent-color-1);
+  background-color: $accent-color-1;
   grid-template-columns: repeat(4, 1fr);
   padding: 1px;
 }
@@ -242,7 +236,7 @@ body {
     --calculator-w: 340px;
     --calculator-display-h: 120px;
     --display-top-font-size: 1.1rem;
-    --display-bottom-font-size: 1.8rem;
+    --display-bottom-font-size: 1.7rem;
   }
 }
 
@@ -257,7 +251,7 @@ body {
     --calculator-w: 480px;
     --calculator-display-h: 175px;
     --display-top-font-size: 1.3rem;
-    --display-bottom-font-size: 2.5rem;
+    --display-bottom-font-size: 2.4rem;
     --calculator-cmd-h: 4rem;
     --btn-small-w: 25px;
     --btn-small-h: 35px;
@@ -273,7 +267,7 @@ body {
     --calculator-display-h: 190px;
   }
 
-  .o-container {
+  .o-wrapper {
     justify-content: flex-start;
     align-items: flex-start;
   }

@@ -202,7 +202,7 @@ const App = () => {
   );
 
   return (
-    <div className="o-container">
+    <div className="o-wrapper">
       <div className="c-calculator">
         <Display top={memory} bottom={currentVal} />
 
